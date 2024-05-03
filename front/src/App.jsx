@@ -5,14 +5,14 @@ import Login from "./pages/Login";
 
 function App() {
   return (
-    <div className="container mx-auto p-4">
-      App App
+    <>
       <Routes>
+        App App
         <Route path="/" element={<Home />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
       </Routes>
-    </div>
+    </>
   );
 }
 
