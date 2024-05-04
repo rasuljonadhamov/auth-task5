@@ -30,6 +30,31 @@ db.connect(() => {
   console.log("Connected");
 });
 
+const verifyUser = (req, res, next) => {
+  try {
+    const token = req.cookies.token;
+    if (!token) {
+      return res.json({ Error: "You are not Authorized" });
+    } else {
+      jwt.verify(token, "jwt-secret-key", (err, decoded) => {
+        if (err) {
+          return res.json({ Error: "Invalid token" });
+        } else {
+          req.name = decoded.name;
+          next();
+        }
+      });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.json({ Error: "An error occurred during authentication." });
+  }
+};
+
+app.get("/", verifyUser, (req, res) => {
+  return res.json({ Status: "Success", name: req.name });
+});
+
 app.post("/register", (req, res) => {
   const q = "INSERT INTO login (`name` , `email`,`password`) VALUES (?)";
   bcrypt.hash(req.body.password, saltRounds, (err, hash) => {
@@ -42,6 +67,11 @@ app.post("/register", (req, res) => {
       return res.json({ Status: "Success" });
     });
   });
+});
+
+app.get("/logout", (req, res) => {
+  res.clearCookie("token");
+  res.json({ Status: "Success", Message: "Logged out successfully" });
 });
 
 app.post("/login", (req, res) => {
