@@ -69,6 +69,19 @@ app.post("/register", (req, res) => {
   });
 });
 
+app.get("/users", (req, res) => {
+  const query = "SELECT id, name, email FROM login";
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching users:", err);
+      res.status(500).json({ error: "Error fetching users" });
+    } else {
+      res.json(results);
+    }
+  });
+});
+
 app.get("/logout", (req, res) => {
   res.clearCookie("token");
   res.json({ Status: "Success", Message: "Logged out successfully" });
@@ -105,6 +118,48 @@ app.post("/login", (req, res) => {
       );
     } else {
       return res.json({ Error: "Invalid credentials" });
+    }
+  });
+});
+
+app.post("/block", (req, res) => {
+  const userIds = req.body.userIds;
+
+  const query = "UPDATE login SET status = 'blocked' WHERE id IN (?)";
+  db.query(query, [userIds], (err, result) => {
+    if (err) {
+      console.error("Error blocking users:", err);
+      res.status(500).json({ error: "Error blocking users" });
+    } else {
+      res.json({ success: true });
+    }
+  });
+});
+
+app.post("/unblock", (req, res) => {
+  const userIds = req.body.userIds;
+
+  const query = "UPDATE login SET status = 'active' WHERE id IN (?)";
+  db.query(query, [userIds], (err, result) => {
+    if (err) {
+      console.error("Error unblocking users:", err);
+      res.status(500).json({ error: "Error unblocking users" });
+    } else {
+      res.json({ success: true });
+    }
+  });
+});
+
+app.post("/delete", (req, res) => {
+  const userIds = req.body.userIds;
+
+  const query = "DELETE FROM login WHERE id IN (?)";
+  db.query(query, [userIds], (err, result) => {
+    if (err) {
+      console.error("Error deleting users:", err);
+      res.status(500).json({ error: "Error deleting users" });
+    } else {
+      res.json({ success: true });
     }
   });
 });

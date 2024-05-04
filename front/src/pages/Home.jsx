@@ -61,13 +61,13 @@
 
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Link, useHistory } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Home = () => {
   const [auth, setAuth] = useState(false);
   const [name, setName] = useState("");
   const [message, setMessage] = useState("");
-  const history = useHistory();
+  const navigate = useNavigate();
 
   axios.defaults.withCredentials = true;
 
@@ -92,7 +92,7 @@ const Home = () => {
       .get("http://localhost:8000/logout")
       .then((res) => {
         console.log(res);
-        history.push("/login");
+        navigate("/register");
       })
       .catch((err) => console.log(err));
   };
